@@ -61,7 +61,7 @@ impl VsiTray {
 
     fn connect(&self) {
         nwg::simple_message("Hello", "Hello World!");
-        notif::test_notification().unwrap();
+        notif::trigger_demo_notif().unwrap();
         self.tray.set_icon(&self.blue_icon);
     }
 
