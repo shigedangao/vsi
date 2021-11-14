@@ -33,8 +33,10 @@ impl NotificationManager {
     }
 }
 
-pub fn trigger_demo_notif() -> Result<(), VSIError> {
-    NotificationManager::new("VSI")
-        .set_texts(Some("hey"), None)
+/// Trigger Demo Notif
+///     Wrap the call to the NotificationManager
+pub fn trigger_demo_notif(first_content: Option<&str>, second_content: Option<&str>) -> Result<(), VSIError> {
+    NotificationManager::new("VSI - Landing rate")
+        .set_texts(first_content, second_content)
         .show()
 }
