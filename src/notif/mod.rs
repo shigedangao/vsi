@@ -2,9 +2,34 @@ use windows::runtime::HSTRING;
 use windows::{
     Data::Xml::Dom::XmlDocument,
     UI::Notifications::ToastNotification,
-    UI::Notifications::ToastNotificationManager
+    UI::Notifications::ToastNotificationManager,
+    ApplicationModel::AppInfo
 };
+use winrt_notification::{Duration, Sound, Toast};
 use super::err::VSIError;
+
+pub mod utils;
+mod helper;
+
+pub struct NotifWrapper {
+    handler: Toast
+}
+
+impl NotifWrapper {
+    fn new(title: &str) -> Result<Self, VSIError> {
+        let model_id = utils::get_app_model_id();
+        Toast::POWERSHELL_APP_ID;
+        let toast = Toast::new(&model_id).title(title);
+
+        Ok(NotifWrapper {
+            handler: toast
+        })
+    }
+
+    fn show(self) {
+        self.handler.title("coucou").show().expect("unable to show toast");
+    }
+}
 
 pub struct Notification {
     toast_xml: XmlDocument
@@ -49,4 +74,12 @@ pub fn test_notification() -> Result<(), VSIError> {
 
     Notification::new_from_template(xml)?
         .create_toast()
+}
+
+pub fn test_notification_lib() -> Result<(), VSIError> {
+    NotifWrapper::new("hello")?.show();
+    // let hwnd = helper::find_window_from_process();
+    // println!("{:?}", hwnd);
+
+    Ok(())
 }

@@ -9,7 +9,7 @@ use crate::notif;
 pub struct VsiTray {
     data: RefCell<Option<thread::JoinHandle<u64>>>,
 
-    #[nwg_control]
+    #[nwg_control()]
     #[nwg_events(OnInit: [VsiTray::on_init])]
     window: nwg::MessageWindow,
 
@@ -61,7 +61,7 @@ impl VsiTray {
 
     fn connect(&self) {
         nwg::simple_message("Hello", "Hello World!");
-        notif::test_notification().unwrap();
+        notif::test_notification_lib().unwrap();
         self.tray.set_icon(&self.blue_icon);
     }
 
