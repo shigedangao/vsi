@@ -4,10 +4,11 @@ use std::cell::RefCell;
 use std::thread;
 use super::err::VSIError;
 use crate::notif;
+use crate::msfs;
 
 #[derive(Default, NwgUi)]
 pub struct VsiTray {
-    data: RefCell<Option<thread::JoinHandle<u64>>>,
+    data: RefCell<Option<thread::JoinHandle<Result<(), VSIError>>>>,
 
     #[nwg_control]
     #[nwg_events(OnInit: [VsiTray::on_init])]
@@ -40,6 +41,7 @@ pub struct VsiTray {
 
 }
 
+// @TODO finish implementation of other uses cases
 impl VsiTray {
     fn show_menu(&self) {
         let (x, y) = nwg::GlobalCursor::position();
@@ -48,11 +50,7 @@ impl VsiTray {
 
     fn on_init(&self) {
         let sender = self.notice.sender();
-        *self.data.borrow_mut() = Some(thread::spawn(move || {
-            sender.notice();
-            println!("on thread");
-            1+1
-        }));
+        *self.data.borrow_mut() = msfs::trigger_simconnect_collection(sender);
     }
 
     fn on_notice(&self) {
@@ -61,7 +59,6 @@ impl VsiTray {
 
     fn connect(&self) {
         nwg::simple_message("Hello", "Hello World!");
-        notif::trigger_demo_notif().unwrap();
         self.tray.set_icon(&self.blue_icon);
     }
 
@@ -72,7 +69,6 @@ impl VsiTray {
 
 /// Boostrap Tray
 ///     Run the tray app
-/// 
 pub fn bootstrap_tray() -> Result<(), VSIError> {
     nwg::init()?;
     let _ui = VsiTray::build_ui(Default::default())?;
