@@ -9,6 +9,7 @@ use msfs::sim_connect::{
     SIMCONNECT_OBJECT_ID_USER
 };
 use msfs::sys::SIMCONNECT_RECV_SIMOBJECT_DATA;
+use tracing::{info, warn};
 use crate::err::VSIError;
 
 mod def;
@@ -22,7 +23,7 @@ const DISPATCH_INTERVAL: u64 = 20;
 ///     Open a connection with SimConnect. If the connection fail
 ///     we then return an error which will close the thread
 fn open_connection<'a>() -> Result<Pin<Box<SimConnect<'a>>>, VSIError> {
-    println!("youhou");
+    info!(stage = "simconnect", "Opening connection...");
     // /!\ If we try to establish a connection
     // with the sim closed, the crate won't pick up the connection...
     // a solution would be to maybe check the connection with a timer ?
@@ -30,7 +31,8 @@ fn open_connection<'a>() -> Result<Pin<Box<SimConnect<'a>>>, VSIError> {
     let sim = SimConnect::open(APP_NAME, handle_recv)
         .map_err(|err| VSIError::SimConnectConnectionFailure(err.to_string()))?;
 
-    println!("Establish connection with sim");
+    info!(stage = "simconnect", "Connection establish");
+
     Ok(sim)
 }
 
@@ -40,8 +42,8 @@ fn open_connection<'a>() -> Result<Pin<Box<SimConnect<'a>>>, VSIError> {
 fn handle_recv(sim: &mut SimConnect, recv: SimConnectRecv) {
     match recv {
         SimConnectRecv::SimObjectData(event) => handle_simobject_data_event(sim, event),
-        SimConnectRecv::Exception(err) => println!("{:?}", err),
-        _ => println!("{:?}", recv)
+        SimConnectRecv::Exception(err) => warn!(stage = "simconnect::handler", "simconnect data error {:?}", err),
+        _ => info!(stage = "simconnect::handler", "not handled event {:?}", recv)
     }
 }
 
@@ -51,7 +53,7 @@ fn handle_simobject_data_event(sim: &mut SimConnect, event: &SIMCONNECT_RECV_SIM
     match event.dwRequestID {
         0 => {
             if let Some(res) = event.into::<def::Payload>(sim) {
-                res.dispatch_landing_rate_notif();
+                res.to_owned().floor_value().dispatch_landing_rate_notif();
             }
         },
         _ => {}
