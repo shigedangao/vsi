@@ -3,7 +3,6 @@ use nwg::NativeUi;
 use std::cell::RefCell;
 use std::thread;
 use super::err::VSIError;
-use crate::notif;
 use crate::msfs;
 
 #[derive(Default, NwgUi)]

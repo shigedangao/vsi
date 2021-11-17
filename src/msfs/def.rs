@@ -2,7 +2,7 @@ use msfs::sim_connect::data_definition;
 use super::state;
 
 #[data_definition]
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Payload {
     #[name = "G FORCE"]
     #[unit = "GForce"]
@@ -34,4 +34,18 @@ impl Payload {
             guard.send_notification(&self);
         }
     }
+
+    pub fn floor_value(&mut self) -> &Self {
+        self.g_force = round_value(self.g_force, 100.0);
+        self.touchdown_velocity = round_value(self.touchdown_velocity, 100.0);
+        self.touchdown_pitch_deg = round_value(self.touchdown_pitch_deg, 10.0);
+        self.touchdown_heading_deg = round_value(self.touchdown_heading_deg, 1.0);
+        self.touchdown_bank_deg = round_value(self.touchdown_bank_deg, 10.0);
+
+        self
+    }
+}
+
+fn round_value(value: f64, amount: f64) -> f64 {
+    (value * amount).round() / amount
 }

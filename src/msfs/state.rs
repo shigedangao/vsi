@@ -59,7 +59,7 @@ impl State {
                 ).as_str()),
                 Some(format!(
                     "Pitch attitude {} / Heading {} / Bank angle {}",
-                    payload.touchdown_pitch_deg,
+                    - payload.touchdown_pitch_deg,
                     payload.touchdown_heading_deg,
                     payload.touchdown_bank_deg
                 ).as_str())
