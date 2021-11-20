@@ -4,7 +4,11 @@ use std::cell::RefCell;
 use std::thread;
 use super::err::VSIError;
 use crate::msfs;
+use crate::notif;
+use tracing::{info, warn};
 
+/// Vsi Tray
+///     Struct used to create a tray app icon
 #[derive(Default, NwgUi)]
 pub struct VsiTray {
     data: RefCell<Option<thread::JoinHandle<Result<(), VSIError>>>>,
@@ -23,7 +27,7 @@ pub struct VsiTray {
     #[nwg_resource(source_file: Some("./plane-red.ico"))]
     red_icon: nwg::Icon,
 
-    #[nwg_control(icon: Some(&data.blue_icon), tip: Some("VSI FS2020 monitor"))]
+    #[nwg_control(icon: Some(&data.red_icon), tip: Some("VSI FS2020 monitor"))]
     #[nwg_events(MousePressLeftUp: [VsiTray::show_menu], OnContextMenu: [VsiTray::show_menu])]
     tray: nwg::TrayNotification,
 
@@ -40,30 +44,77 @@ pub struct VsiTray {
 
 }
 
-// @TODO finish implementation of other uses cases
 impl VsiTray {
+    /// Show Menu
+    /// 
+    /// # Arguments
+    /// 
+    /// * `&self` - &VsiTray
     fn show_menu(&self) {
         let (x, y) = nwg::GlobalCursor::position();
         self.tray_menu.popup(x, y);
     }
 
+    /// On Init
+    /// 
+    /// # Arguments
+    /// 
+    /// * `&self` - &VsiTray
     fn on_init(&self) {
-        let sender = self.notice.sender();
-        *self.data.borrow_mut() = msfs::trigger_simconnect_collection(sender);
+        connect_to_sim(&self);
     }
 
+    /// On Notice
+    ///     Send a notification that the app wasn't able to connect to FS2020
+    ///     
+    /// # Arguments
+    /// 
+    /// * `&self` - &VsiTray
     fn on_notice(&self) {
-        println!("on notice");
+        match notif::send_notif(
+            Some("Unable to connec to FS2020. Please click on reconnect when the simulator is available"), 
+            None
+        ) {
+            Ok(_) => info!(step = "notice", "Unable to connect notif sent"),
+            Err(err) => warn!(step = "notice", "Unable to send notif {}", err)
+        };
+
+        self.tray.set_icon(&self.red_icon);
     }
 
+    /// Connect
+    ///     Click on the connect button to try to re-establish a connection with FS2020
+    /// 
+    /// # Arguments
+    /// 
+    /// * `&self` - &VsiTray
     fn connect(&self) {
-        nwg::simple_message("Hello", "Hello World!");
-        self.tray.set_icon(&self.blue_icon);
+        connect_to_sim(&self);
     }
 
+    /// Exit
+    ///     Exit the app
+    /// 
+    /// # Arguments
+    /// 
+    /// * `&self` - &VsiTray
     fn exit(&self) {
         nwg::stop_thread_dispatch();
     }
+}
+
+/// Connect To Sim
+///     Connect to the simulator and set the icon
+///     Connection to the simulator happened asynchronously within a thread. See the definition of the 
+///     trigger_simconnect_collection method for more information
+/// 
+/// # Arguments
+/// 
+/// * `vsi` - &VsiTray
+fn connect_to_sim(vsi: &VsiTray) {
+    let sender = vsi.notice.sender();
+    *vsi.data.borrow_mut() = msfs::trigger_simconnect_collection(sender);
+    vsi.tray.set_icon(&vsi.blue_icon);
 }
 
 /// Boostrap Tray
