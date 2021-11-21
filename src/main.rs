@@ -1,3 +1,5 @@
+#![windows_subsystem = "windows"]
+
 extern crate native_windows_gui as nwg;
 extern crate native_windows_derive as nwd;
 
@@ -10,6 +12,8 @@ mod err;
 mod notif;
 mod msfs;
 
+/// Prepare Log Lib
+///     Only used in the context of dev to get log of the app
 fn prepare_log_lib() -> Result<()> {
     if std::env::var("RUST_LIB_BACKTRACE").is_err() {
         std::env::set_var("RUST_LIB_BACKTRACE", "1")

@@ -1,42 +1,82 @@
-use winrt_notification::Toast;
+use notify_rust::Notification;
 use super::err::VSIError;
 
+/// Notification Manager
+///     A struct which helps to operate on the Notification library
 pub struct NotificationManager {
-    toast: Toast
+    handle: Notification
 }
 
 impl NotificationManager {
+    /// New
+    /// 
+    /// # Arguments
+    /// 
+    /// * `title` - &str
     fn new(title: &str) -> Self {
-        let mut toast = Toast::new(Toast::POWERSHELL_APP_ID);
-        toast = toast.title(title);
+        let mut handle = Notification::new();
+        handle.appname = title.to_string();
 
         NotificationManager {
-            toast
+            handle
         }
     }
 
-    fn set_texts(mut self, first_content: Option<&str>, second_content: Option<&str>) -> Self {
-        if let Some(content) = first_content {
-            self.toast = self.toast.text1(content);
+    /// Set Content
+    ///     Set optional content
+    /// 
+    /// # Arguments
+    /// 
+    /// * `mut self` - self
+    /// * `summary` - Option<&str>
+    /// * `body` - Option<&str>
+    fn set_content(mut self, summary: Option<&str>, body: Option<&str>) -> Self {
+        if let Some(content) = summary {
+            self.handle.summary(content);
         }
 
-        if let Some(content) = second_content {
-            self.toast = self.toast.text2(content);
+        if let Some(content) = body {
+            self.handle.body(content);
         }
 
         self
     }
 
+    /// Set Sound
+    ///     Set the notification sound (use SMS)
+    /// 
+    /// # Arguments
+    /// 
+    /// * `mut self` - Self
+    fn set_sound(mut self) -> Self {
+        self.handle.sound_name("SMS");
+
+        self
+    }
+
+    /// Show
+    ///     Show the notification. 
+    /// 
+    /// # Arguments
+    /// 
+    /// * `&mut self` - Self
     fn show(&mut self) -> Result<(), VSIError> {
-        self.toast.show()
-            .map_err(VSIError::from)
+        self.handle.show().unwrap();
+
+        Ok(())
     }
 }
 
-/// Trigger Demo Notif
-///     Wrap the call to the NotificationManager
-pub fn trigger_demo_notif(first_content: Option<&str>, second_content: Option<&str>) -> Result<(), VSIError> {
+/// Send Notif
+///     Send a notification
+/// 
+/// # Arguments
+/// 
+/// * `summary` - Option<&str>
+/// * `body` - Option<&str>
+pub fn send_notif(summary: Option<&str>, body: Option<&str>) -> Result<(), VSIError> {
     NotificationManager::new("VSI - Landing rate")
-        .set_texts(first_content, second_content)
+        .set_content(summary, body)
+        .set_sound()
         .show()
 }
