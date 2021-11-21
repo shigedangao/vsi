@@ -1,0 +1,28 @@
+on: push
+
+env:
+  FS2020_SDK_LINK: https://storage.googleapis.com/msfs-sdk/MSFS_SDK_Core_Installer_0.16.0.0.msi
+
+jobs:
+  test:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v2
+      - name: download fs2020 sdk
+        run: curl.exe -o MSFS_SDK_Core_Installer_0.16.0.0.msi ${{ env.FS2020_SDK_LINK }} 
+      - name: install fs2020 sdk
+        run: msiexec.exe /i ${{ github.workspace }}\MSFS_SDK_Core_Installer_0.16.0.0.msi /quiet
+      - name: run ls in c sdk
+        run: ls C:\'.\MSFS SDK\'
+      - name: run tests
+        run: cargo test
+
+  clippy:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - run: rustup component add clippy
+      - uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --all-features
