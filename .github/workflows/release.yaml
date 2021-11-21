@@ -3,6 +3,10 @@ on:
     tags:
       - "v*.*.*"
 
+env:
+  FS2020_SDK_LINK: https://storage.googleapis.com/msfs-sdk/MSFS_SDK_Core_Installer_0.16.0.0.msi
+  FS2020_SDK_SAMPLE_LINK: https://storage.googleapis.com/msfs-sdk/MSFS_SDK_Samples_Installer_0.16.0.0.msi
+
 jobs:
   build:
     runs-on: windows-2022
