@@ -1,7 +1,7 @@
-# VSI 🛬 (W I P)
+# VSI 🛬
 
 <p align="center">
-    <iframe src="https://giphy.com/embed/RjBZI0nO3Hk6aprlMz" width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/SafranGroup-landing-airbus-a350-RjBZI0nO3Hk6aprlMz">via GIPHY</a></p>
+    <img src="https://j.gifs.com/yE1V8O.gif" />
 </p>
 
 A small Windows Tray app which send a notification when your aircraft touchdown on the FS2020 simulator
