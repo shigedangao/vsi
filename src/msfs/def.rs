@@ -64,3 +64,28 @@ impl Payload {
 fn round_value(value: f64, amount: f64) -> f64 {
     (value * amount).round() / amount
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn expect_to_round_values() {
+        let mut payload = Payload {
+            g_force: 1.1254687,
+            touchdown_velocity: 100.245878945,
+            touchdown_pitch_deg: 4.2555,
+            touchdown_heading_deg: 123.2545,
+            touchdown_bank_deg: 1.245468,
+            on_ground: true
+        };
+
+        payload.floor_value();
+
+        assert_eq!(payload.g_force, 1.13);
+        assert_eq!(payload.touchdown_velocity, 100.25);
+        assert_eq!(payload.touchdown_pitch_deg, 4.3);
+        assert_eq!(payload.touchdown_heading_deg, 123.0);
+        assert_eq!(payload.touchdown_bank_deg, 1.2);
+    }
+}
