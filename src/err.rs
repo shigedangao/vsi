@@ -14,6 +14,7 @@ impl fmt::Display for VSIError {
             VSIError::TrayBootload(msg) => write!(f, "Unexpected error when bootstraping the Tray app: {}", msg),
             VSIError::SimConnectConnectionFailure(msg) => write!(f, "An error happened when trying to establish connection with SimConnect {}", msg),
             VSIError::SimConnectRuntime(msg) => write!(f, "Unexpected error while communicating with SimConnect {}", msg),
+            VSIError::Notification(msg) => write!(f, "Error happened while sending notification {}", msg)
         }
     }
 }
