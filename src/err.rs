@@ -5,6 +5,7 @@ pub enum VSIError {
     TrayBootload(String),
     SimConnectConnectionFailure(String),
     SimConnectRuntime(String),
+    Notification(String)
 }
 
 impl fmt::Display for VSIError {
@@ -22,5 +23,11 @@ impl std::error::Error for VSIError {}
 impl From<nwg::NwgError> for VSIError {
     fn from(err: nwg::NwgError) -> Self {
         VSIError::TrayBootload(err.to_string()) 
+    }
+}
+
+impl From<notify_rust::error::Error> for VSIError {
+    fn from(err: notify_rust::error::Error) -> Self {
+        VSIError::Notification(err.to_string())
     }
 }
