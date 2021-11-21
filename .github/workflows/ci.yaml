@@ -9,23 +9,25 @@ jobs:
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v2
-      - name: download fs2020 sdk
-        run: curl.exe -o MSFS_SDK_Core_Installer_0.16.0.0.msi ${{ env.FS2020_SDK_LINK }} 
-      - name: install fs2020 sdk
-        run: msiexec.exe /i ${{ github.workspace }}\MSFS_SDK_Core_Installer_0.16.0.0.msi /quiet
-      - name: download fs2020 sdk sample
-        run: curl.exe -o MSFS_SDK_Samples_Installer_0.16.0.0.msi ${{ env.FS2020_SDK_SAMPLE_LINK }}
-      - name: install fs2020 sample sdk
-        run: msiexec.exe /i ${{ github.workspace }}\MSFS_SDK_Samples_Installer_0.16.0.0.msi /quiet
-      - name: run ls in c sdk
-        run: ls C:\'.\MSFS SDK\'
+      - name: install msfs sdk
+        uses: ./msfs-sdk-action
+        with:
+          sdk_url: ${{ env.FS2020_SDK_LINK }}
+          sample_sdk_url: ${{ env.FS2020_SDK_SAMPLE_LINK }}
       - name: run tests
         run: cargo test
 
+  # can't run the clippy task async as it would cause conflict during the installation of msfs sdk
   clippy:
-    runs-on: ubuntu-20.04
+    runs-on: windows-2022
+    needs: test
     steps:
       - uses: actions/checkout@v2
+      - name: install msfs sdk
+        uses: ./msfs-sdk-action
+        with:
+          sdk_url: ${{ env.FS2020_SDK_LINK }}
+          sample_sdk_url: ${{ env.FS2020_SDK_SAMPLE_LINK }}
       - run: rustup component add clippy
       - uses: actions-rs/clippy-check@v1
         with:
