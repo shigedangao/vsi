@@ -8,6 +8,11 @@ jobs:
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v2
+      - name: install msfs sdk
+        uses: ./msfs-sdk-action
+        with:
+          sdk_url: ${{ env.FS2020_SDK_LINK }}
+          sample_sdk_url: ${{ env.FS2020_SDK_SAMPLE_LINK }}
       - name: build release
         run: cargo build --release
       - name: zip the release
