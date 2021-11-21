@@ -2,6 +2,7 @@ on: push
 
 env:
   FS2020_SDK_LINK: https://storage.googleapis.com/msfs-sdk/MSFS_SDK_Core_Installer_0.16.0.0.msi
+  FS2020_SDK_SAMPLE_LINK: https://storage.googleapis.com/msfs-sdk/MSFS_SDK_Samples_Installer_0.16.0.0.msi
 
 jobs:
   test:
@@ -12,6 +13,10 @@ jobs:
         run: curl.exe -o MSFS_SDK_Core_Installer_0.16.0.0.msi ${{ env.FS2020_SDK_LINK }} 
       - name: install fs2020 sdk
         run: msiexec.exe /i ${{ github.workspace }}\MSFS_SDK_Core_Installer_0.16.0.0.msi /quiet
+      - name: download fs2020 sdk sample
+        run: curl.exe -o MSFS_SDK_Samples_Installer_0.16.0.0.msi ${{ env.FS2020_SDK_SAMPLE_LINK }}
+      - name: install fs2020 sample sdk
+        run: msiexec.exe /i ${{ github.workspace }}\MSFS_SDK_Samples_Installer_0.16.0.0.msi /quiet
       - name: run ls in c sdk
         run: ls C:\'.\MSFS SDK\'
       - name: run tests
