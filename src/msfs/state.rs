@@ -100,3 +100,36 @@ impl State {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn expect_to_send_notification() {
+        let payload = Payload {
+            touchdown_velocity: 100.0,
+            on_ground: true,
+            ..Default::default()
+        };
+
+        let mut state = State::new();
+        state.set_state(true, 100.0);
+        state.send_notification(&payload);
+
+        assert_eq!(state.sent, true);
+    }
+
+    #[test]
+    fn expect_to_not_send_notification() {
+        let payload = Payload {
+            on_ground: false,
+            ..Payload::default()
+        };
+        let mut state = State::new();
+        state.set_state(true, 0.0);
+        state.send_notification(&payload);
+
+        assert_eq!(state.sent, false);
+    }
+}

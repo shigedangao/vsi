@@ -2,7 +2,7 @@ use msfs::sim_connect::data_definition;
 use super::state;
 
 #[data_definition]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct Payload {
     #[name = "G FORCE"]
     #[unit = "GForce"]
@@ -21,13 +21,17 @@ pub struct Payload {
     pub touchdown_bank_deg: f64,
     #[name = "SIM ON GROUND"]
     #[unit = "Bool"]
-    on_ground: bool
+    pub on_ground: bool
 }
 
 impl Payload {
     /// Dispatch Landing Rate Notif
     ///     Dispatch a possibility to send a notification based on what has been
     ///     detected in the Payload struct
+    /// 
+    /// # Arguments
+    /// 
+    /// * `&self` - Self
     pub fn dispatch_landing_rate_notif(&self) {
         if let Ok(mut guard) = state::STATE.lock() {
             guard.set_state(self.on_ground, self.touchdown_velocity);
@@ -35,6 +39,11 @@ impl Payload {
         }
     }
 
+    /// Floor Value
+    ///     Make the values more digestible for the user
+    /// 
+    /// # Arguments
+    /// * `&mut self` - &Self
     pub fn floor_value(&mut self) -> &Self {
         self.g_force = round_value(self.g_force, 100.0);
         self.touchdown_velocity = round_value(self.touchdown_velocity, 100.0);
@@ -46,6 +55,12 @@ impl Payload {
     }
 }
 
+/// Round Value
+/// 
+/// # Arguments
+/// 
+/// * `value` - f64
+/// * `amount` - f64
 fn round_value(value: f64, amount: f64) -> f64 {
     (value * amount).round() / amount
 }
