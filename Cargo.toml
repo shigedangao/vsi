@@ -19,3 +19,7 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 [build-dependencies]
 embed-resource = "1.6"
+winres = "0.1.12"
+
+[package.metadata.winres]
+OriginalFilename = "vsi.exe"

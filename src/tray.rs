@@ -21,10 +21,10 @@ pub struct VsiTray {
     #[nwg_events( OnNotice: [VsiTray::on_notice])]
     notice: nwg::Notice,
 
-    #[nwg_resource(source_file: Some("./plane-blue.ico"))]
+    #[nwg_resource(source_bin: Some(include_bytes!("../plane-blue.ico")))]
     blue_icon: nwg::Icon,
 
-    #[nwg_resource(source_file: Some("./plane-red.ico"))]
+    #[nwg_resource(source_bin: Some(include_bytes!("../plane-red.ico")))]
     red_icon: nwg::Icon,
 
     #[nwg_control(icon: Some(&data.red_icon), tip: Some("VSI FS2020 monitor"))]
