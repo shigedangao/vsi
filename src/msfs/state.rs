@@ -21,7 +21,7 @@ lazy_static! {
 ///         However, we are not able to add additional parameter to the callback method of SimConnect
 #[derive(Debug, Default)]
 pub struct State {
-    touchdown_velocity: f64,
+    g_force: f64,
     on_ground: bool,
     sent: bool
 }
@@ -41,8 +41,8 @@ impl State {
     /// 
     /// * `mut &self` - Self
     /// * `on_ground` - bool
-    /// * `touchdown_velocity` - f64
-    pub fn set_state(&mut self, on_ground: bool, touchdown_velocity: f64) {
+    /// * `g_force` - f64
+    pub fn set_state(&mut self, on_ground: bool, g_force: f64) {
         // The aircraft could have bounced
         // So we are setting the sent flag to false in this case
         // in order to send an other notification if needed
@@ -50,7 +50,7 @@ impl State {
             self.sent = false;
         }
 
-        self.touchdown_velocity = touchdown_velocity;
+        self.g_force = g_force;
         self.on_ground = on_ground;
     }
 
@@ -66,25 +66,22 @@ impl State {
         // The touchdown velocity should be above 0
         // Use a flag to not send an other notification
         if self.on_ground &&
-            self.touchdown_velocity > 0.9 &&
+            self.g_force > 1.0 &&
             !self.sent {
             // send notif
-            let summary = format!("Vertical speed {} fpm", payload.touchdown_velocity);
-            let mut content = format!("
-                G_Force: {}
-                Pitch_attitude: {}
-                Heading: {}
-                Bank_angle: {}",
-                payload.g_force,
+            let summary = format!("Vertical speed {} fpm / {}G ", payload.touchdown_velocity, payload.g_force);
+            let content = format!("
+Pitch_attitude: {} deg
+Heading: {} deg / Bank_angle: {} deg
+Airspeed: {} knots
+Wind: {}/{} deg",
                 -payload.touchdown_pitch_deg,
                 payload.touchdown_heading_deg,
-                payload.touchdown_bank_deg
+                payload.touchdown_bank_deg,
+                payload.indicated_airspeed,
+                payload.wind_direction,
+                payload.wind_velocity
             );
-
-            // Remove whitespace at the beginning of the string
-            content = content.replace(" ", "");
-            // Add whitespace after the ":" character
-            content = content.replace(":", ": ");
 
             // send the notification
             let res = notif::send_notif(
