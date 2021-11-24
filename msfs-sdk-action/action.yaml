@@ -1,0 +1,24 @@
+name: msfs-sdk
+description: install msfs sdk on github actions
+inputs:
+  sdk_url:
+    description: msfs sdk link
+    required: true
+  sample_sdk_url:
+    description: msfs sdk sample link
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - shell: powershell
+      run: curl.exe -o MSFS_SDK_Core_Installer.msi ${{ inputs.sdk_url }} 
+    - shell: powershell
+      run: msiexec.exe /i ${{ github.workspace }}\MSFS_SDK_Core_Installer.msi /passive
+    - shell: powershell
+      run: curl.exe -o MSFS_SDK_Samples_Installer.msi ${{ inputs.sample_sdk_url }}
+    # add a pause to prevent installation conflict
+    - shell: powershell
+      run: Start-Sleep -Seconds 20
+    - shell: powershell
+      run: msiexec.exe /i ${{ github.workspace }}\MSFS_SDK_Samples_Installer.msi /passive
+      

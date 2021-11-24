@@ -61,7 +61,7 @@ impl NotificationManager {
     /// 
     /// * `&mut self` - Self
     fn show(&mut self) -> Result<(), VSIError> {
-        self.handle.show().unwrap();
+        self.handle.show()?;
 
         Ok(())
     }
