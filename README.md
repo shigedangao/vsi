@@ -22,6 +22,8 @@ If the icon appear in **red** like above. This mean that the simulator is not ru
 
 In this case, when the sim is available. You may right click on the icon and click on the button `Re-connect to FS2020`. The icon should then turn blue
 
+# Local dev
+
 ## Requirements
 
 - Rust
@@ -31,7 +33,6 @@ In this case, when the sim is available. You may right click on the icon and cli
 - FS2020 SDK sample
 - Visual studio
 
-## Local dev
 
 1. Clone this repository
 2. Comment the `main.rs` by commenting the line below
