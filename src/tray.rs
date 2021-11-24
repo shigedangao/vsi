@@ -72,7 +72,7 @@ impl VsiTray {
     /// * `&self` - &VsiTray
     fn on_notice(&self) {
         match notif::send_notif(
-            Some("Unable to connec to FS2020. Please click on reconnect when the simulator is available"), 
+            Some("Unable to connect to FS2020. Please, right click on the tray app and click on re-connect when FS2020 is ready"), 
             None
         ) {
             Ok(_) => info!(step = "notice", "Unable to connect notif sent"),

@@ -19,6 +19,15 @@ pub struct Payload {
     #[name = "PLANE TOUCHDOWN BANK DEGREES"]
     #[unit = "Degrees"]
     pub touchdown_bank_deg: f64,
+    #[name = "AIRSPEED INDICATED"]
+    #[unit = "Knots"]
+    pub indicated_airspeed: f64,
+    #[name = "AMBIENT WIND DIRECTION"]
+    #[unit = "Degrees"]
+    pub wind_direction: f64,
+    #[name = "AMBIENT WIND VELOCITY"]
+    #[unit = "Knots"]
+    pub wind_velocity: f64,
     #[name = "SIM ON GROUND"]
     #[unit = "Bool"]
     pub on_ground: bool
@@ -34,7 +43,7 @@ impl Payload {
     /// * `&self` - Self
     pub fn dispatch_landing_rate_notif(&self) {
         if let Ok(mut guard) = state::STATE.lock() {
-            guard.set_state(self.on_ground, self.touchdown_velocity);
+            guard.set_state(self.on_ground, self.g_force);
             guard.send_notification(&self);
         }
     }
@@ -50,6 +59,9 @@ impl Payload {
         self.touchdown_pitch_deg = round_value(self.touchdown_pitch_deg, 10.0);
         self.touchdown_heading_deg = round_value(self.touchdown_heading_deg, 1.0);
         self.touchdown_bank_deg = round_value(self.touchdown_bank_deg, 10.0);
+        self.indicated_airspeed = round_value(self.indicated_airspeed, 1.0);
+        self.wind_direction = round_value(self.wind_direction, 1.0);
+        self.wind_velocity = round_value(self.wind_velocity, 1.0);
 
         self
     }
@@ -77,7 +89,10 @@ mod tests {
             touchdown_pitch_deg: 4.2555,
             touchdown_heading_deg: 123.2545,
             touchdown_bank_deg: 1.245468,
-            on_ground: true
+            indicated_airspeed: 125.2,
+            wind_direction: 340.5,
+            wind_velocity: 10.0,
+            on_ground: true,
         };
 
         payload.floor_value();
@@ -87,5 +102,8 @@ mod tests {
         assert_eq!(payload.touchdown_pitch_deg, 4.3);
         assert_eq!(payload.touchdown_heading_deg, 123.0);
         assert_eq!(payload.touchdown_bank_deg, 1.2);
+        assert_eq!(payload.indicated_airspeed, 125.0);
+        assert_eq!(payload.wind_direction, 341.0);
+        assert_eq!(payload.wind_velocity, 10.0);
     }
 }
