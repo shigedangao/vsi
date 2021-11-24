@@ -20,7 +20,7 @@ jobs:
       - name: build release
         run: cargo build --release
       - name: zip the release
-        run: zip -j vsi.zip target/release/vsi.exe
+        run: Compress-Archive target/release/vsi.exe vsi.zip
       - name: create release
         uses: softprops/action-gh-release@v1
         with:
