@@ -48,14 +48,16 @@ In this case, when the sim is available. You may right click on the icon and cli
 cargo run
 ```
 
-## Issues
+## Issue
 
-❌ Setting the *AppUserModelID* work with the window-rs crate. See the branch *try-notif*. However no notification appear for some reasons... It could be required that the app need to be installed with something ? maybe an exe in a specified path with registration key
+❌ Setting the *AppUserModelID* work with the window-rs crate. See the branch *try-notif*. However no notification appear for some reasons... It could be required that the app need to be installed with an MSI. Installing with an MSI would allow to create the *AppUserModelID*. It would then allow me to use a custom icon for the notification.
 
 ## What is currently displayed during a touchdown ?
 
 - G Force
 - Touchdown velocity in fpm
-- Touchdown pitch deg (so far it's negative might need to invert the value)
+- Touchdown pitch deg
 - Touchdown heading
 - Touchdown bank deg
+- Aircraft indicated airspeed
+- Wind direction & speed
