@@ -6,6 +6,22 @@
 
 A small Windows Tray app which send a notification when your aircraft touchdown on the FS2020 simulator
 
+## How to use
+
+1. Download the latest release available [here](https://github.com/shigedangao/vsi/releases). The filename should be **vsi.zip**.
+2. Once download, extract the **vsi.exe** from the zip file.
+3. Launch the app. It should appear on the system tray like the image
+
+### Red icon
+
+![Red icon](tray.png)
+
+If the icon appear in **red** like above. This mean that the simulator is not running. The app should have already notified that the simulator is not running like below.
+
+![Sim unavailable](sim_unavailable.png)
+
+In this case, when the sim is available. You may right click on the icon and click on the button `Re-connect to FS2020`. The icon should then turn blue
+
 ## Requirements
 
 - Rust
