@@ -69,13 +69,18 @@ impl State {
             self.g_force > 1.0 &&
             !self.sent {
             // send notif
-            let summary = format!("Vertical speed {} fpm / {}G ", payload.touchdown_velocity, payload.g_force);
+            let summary = format!(
+                "Vertical speed {} fpm / {}G",
+                payload.vertical_speed,
+                payload.g_force
+            );
+
             let content = format!("
 Pitch_attitude: {} deg
 Heading: {} deg / Bank_angle: {} deg
 Airspeed: {} knots
 Wind: {}/{} deg",
-                -payload.touchdown_pitch_deg,
+                payload.touchdown_pitch_deg,
                 payload.touchdown_heading_deg,
                 payload.touchdown_bank_deg,
                 payload.indicated_airspeed,
@@ -105,7 +110,6 @@ mod tests {
     #[test]
     fn expect_to_send_notification() {
         let payload = Payload {
-            touchdown_velocity: 100.0,
             on_ground: true,
             ..Default::default()
         };

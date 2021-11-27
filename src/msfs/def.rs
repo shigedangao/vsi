@@ -7,9 +7,9 @@ pub struct Payload {
     #[name = "G FORCE"]
     #[unit = "GForce"]
     pub g_force: f64,
-    #[name = "PLANE TOUCHDOWN NORMAL VELOCITY"]
-    #[unit = "Degrees"]
-    pub touchdown_velocity: f64,
+    #[name = "VERTICAL SPEED"]
+    #[unit = "Feet"]
+    pub vertical_speed: f64,
     #[name = "PLANE TOUCHDOWN PITCH DEGREES"]
     #[unit = "Degrees"]
     pub touchdown_pitch_deg: f64,
@@ -55,8 +55,10 @@ impl Payload {
     /// * `&mut self` - &Self
     pub fn floor_value(&mut self) -> &Self {
         self.g_force = round_value(self.g_force, 100.0);
-        self.touchdown_velocity = round_value(self.touchdown_velocity, 100.0);
-        self.touchdown_pitch_deg = round_value(self.touchdown_pitch_deg, 10.0);
+        // Vertical speed return a value per second
+        self.vertical_speed = round_value(self.vertical_speed * 60.0, 100.0);
+        // Sim seems to return a negative value. Hence we're making it positive (usually we don't touchdown nose first)
+        self.touchdown_pitch_deg = - round_value(self.touchdown_pitch_deg, 10.0);
         self.touchdown_heading_deg = round_value(self.touchdown_heading_deg, 1.0);
         self.touchdown_bank_deg = round_value(self.touchdown_bank_deg, 10.0);
         self.indicated_airspeed = round_value(self.indicated_airspeed, 1.0);
@@ -85,8 +87,8 @@ mod tests {
     fn expect_to_round_values() {
         let mut payload = Payload {
             g_force: 1.1254687,
-            touchdown_velocity: 100.245878945,
-            touchdown_pitch_deg: 4.2555,
+            vertical_speed: -1.0,
+            touchdown_pitch_deg: -4.2555,
             touchdown_heading_deg: 123.2545,
             touchdown_bank_deg: 1.245468,
             indicated_airspeed: 125.2,
@@ -98,7 +100,7 @@ mod tests {
         payload.floor_value();
 
         assert_eq!(payload.g_force, 1.13);
-        assert_eq!(payload.touchdown_velocity, 100.25);
+        assert_eq!(payload.vertical_speed, -60.0);
         assert_eq!(payload.touchdown_pitch_deg, 4.3);
         assert_eq!(payload.touchdown_heading_deg, 123.0);
         assert_eq!(payload.touchdown_bank_deg, 1.2);
